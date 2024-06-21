@@ -1,4 +1,6 @@
 ﻿using System.Windows.Input;
+using Assignment.Application.Common.Exceptions;
+using Assignment.Application.Common.Interfaces;
 using Assignment.Application.TodoItems.Commands.DoneTodoItem;
 using Assignment.Application.TodoLists.Queries.GetTodos;
 using Caliburn.Micro;
@@ -9,6 +11,7 @@ internal class TodoManagmentViewModel : Screen
 {
     private readonly ISender _sender;
     private readonly IWindowManager _windowManager;
+    private readonly IExceptionViewer _exceptionViewer;
 
     private IList<TodoListDto> todoLists;
     public IList<TodoListDto> TodoLists
@@ -50,10 +53,14 @@ internal class TodoManagmentViewModel : Screen
     public ICommand AddTodoItemCommand { get; private set; }
     public ICommand DoneTodoItemCommand { get; private set; }
 
-    public TodoManagmentViewModel(ISender sender, IWindowManager windowManager)
+    public TodoManagmentViewModel(ISender sender,
+        IWindowManager windowManager,
+        IExceptionViewer exceptionViewer)
     {
         _sender = sender;
         _windowManager = windowManager;
+        _exceptionViewer = exceptionViewer;
+
         Initialize();
     }
 
@@ -80,18 +87,39 @@ internal class TodoManagmentViewModel : Screen
 
     private async void AddTodoList(object obj)
     {
-        var todoList = new TodoListViewModel(_sender);
-        await _windowManager.ShowDialogAsync(todoList);
+        try
+        {
+            var todoList = new TodoListViewModel(_sender, _exceptionViewer);
+            await _windowManager.ShowDialogAsync(todoList);
+        }
+        catch (ValidationException ex)
+        {
+            await _exceptionViewer.ShowErrors(ex);
+        }
     }
 
     private async void AddTodoItem(object obj)
     {
-        var todoItem = new TodoItemViewModel(_sender, SelectedTodoList.Id);
-        await _windowManager.ShowDialogAsync(todoItem);
+        try
+        {
+            var todoItem = new TodoItemViewModel(_exceptionViewer, _sender, SelectedTodoList.Id);
+            await _windowManager.ShowDialogAsync(todoItem);
+        }
+        catch (ValidationException ex)
+        {
+            await _exceptionViewer.ShowErrors(ex);
+        }
     }
 
     private async void DoneTodoItem(object obj)
     {
-        await _sender.Send(new DoneTodoItemCommand(SelectedItem.Id));
+        try
+        {
+            await _sender.Send(new DoneTodoItemCommand(SelectedItem.Id));
+        }
+        catch (ValidationException ex)
+        {
+            await _exceptionViewer.ShowErrors(ex);
+        }
     }
 }
