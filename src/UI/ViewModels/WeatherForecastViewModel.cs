@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using Assignment.Application.Countries.Queries.GetCountries;
+using Assignment.Application.WeatherForecast.Queries;
 using Caliburn.Micro;
 using MediatR;
 
@@ -103,10 +104,10 @@ public class WeatherForecastViewModel : Screen
         {
             await Task.Delay(1000);
 
-            var forecast = await _sender.Send(new GetCountriesQuery());
+            var temperature = await _sender.Send(new GetWeatherForecastQuery(SelectedCity.Name));
 
-            Temperature = "21";
-            SkyCover = "Sunny";
+            Temperature = temperature.ToString();
+            SkyCover = temperature > 20 ? "Sunny" : "Cloudy";
         }
         catch (Exception ex)
         {
