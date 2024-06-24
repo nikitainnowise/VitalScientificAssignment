@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
-using Assignment.Application;
 using Assignment.Application.Common.Behaviours;
+using Assignment.Application.Services;
+using Assignment.Domain.Interfaces;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,8 @@ public static class DependencyInjection
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         });
+
+        services.AddScoped<ICacheService, CacheService>();
 
         return services;
     }

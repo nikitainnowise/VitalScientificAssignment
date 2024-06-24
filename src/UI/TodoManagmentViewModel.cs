@@ -3,8 +3,10 @@ using Assignment.Application.Common.Exceptions;
 using Assignment.Application.Common.Interfaces;
 using Assignment.Application.TodoItems.Commands.DoneTodoItem;
 using Assignment.Application.TodoLists.Queries.GetTodos;
+using Assignment.Domain.Interfaces;
 using Caliburn.Micro;
 using MediatR;
+using CacheKeys = Assignment.Domain.Constants.CacheKeys;
 
 namespace Assignment.UI;
 internal class TodoManagmentViewModel : Screen
@@ -12,6 +14,7 @@ internal class TodoManagmentViewModel : Screen
     private readonly ISender _sender;
     private readonly IWindowManager _windowManager;
     private readonly IExceptionViewer _exceptionViewer;
+    private readonly ICacheService _cacheService;
 
     private IList<TodoListDto> todoLists;
     public IList<TodoListDto> TodoLists
@@ -55,11 +58,13 @@ internal class TodoManagmentViewModel : Screen
 
     public TodoManagmentViewModel(ISender sender,
         IWindowManager windowManager,
-        IExceptionViewer exceptionViewer)
+        IExceptionViewer exceptionViewer,
+        ICacheService cacheService)
     {
         _sender = sender;
         _windowManager = windowManager;
         _exceptionViewer = exceptionViewer;
+        _cacheService = cacheService;
 
         Initialize();
     }
@@ -75,9 +80,18 @@ internal class TodoManagmentViewModel : Screen
 
     private async Task RefereshTodoLists()
     {
+        var cachedToDoLists = await _cacheService.GetAsync<List<TodoListDto>>(CacheKeys.TodoListsKey);
         var selectedListId = SelectedTodoList?.Id;
 
-        TodoLists = await _sender.Send(new GetTodosQuery());
+        if (cachedToDoLists == null)
+        {
+            TodoLists = await _sender.Send(new GetTodosQuery());
+            await _cacheService.SetAsync(CacheKeys.TodoListsKey, TodoLists.ToList());
+        }
+        else
+        {
+            TodoLists = cachedToDoLists;
+        }
 
         if (selectedListId.HasValue && selectedListId.Value > 0)
         {
@@ -90,7 +104,13 @@ internal class TodoManagmentViewModel : Screen
         try
         {
             var todoList = new TodoListViewModel(_sender, _exceptionViewer);
-            await _windowManager.ShowDialogAsync(todoList);
+            var isSuccess = await _windowManager.ShowDialogAsync(todoList);
+
+            if (isSuccess.HasValue && isSuccess.Value)
+            {
+                await _cacheService.RemoveAsync(CacheKeys.TodoListsKey);
+                await RefereshTodoLists();
+            }
         }
         catch (ValidationException ex)
         {
@@ -103,7 +123,13 @@ internal class TodoManagmentViewModel : Screen
         try
         {
             var todoItem = new TodoItemViewModel(_exceptionViewer, _sender, SelectedTodoList.Id);
-            await _windowManager.ShowDialogAsync(todoItem);
+            var isSuccess = await _windowManager.ShowDialogAsync(todoItem);
+
+            if (isSuccess.HasValue && isSuccess.Value)
+            {
+                await _cacheService.RemoveAsync(CacheKeys.TodoListsKey);
+                await RefereshTodoLists();
+            }
         }
         catch (ValidationException ex)
         {
@@ -116,6 +142,8 @@ internal class TodoManagmentViewModel : Screen
         try
         {
             await _sender.Send(new DoneTodoItemCommand(SelectedItem.Id));
+            await _cacheService.RemoveAsync(CacheKeys.TodoListsKey);
+            await RefereshTodoLists();
         }
         catch (ValidationException ex)
         {

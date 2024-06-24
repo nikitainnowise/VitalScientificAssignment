@@ -1,5 +1,7 @@
 ﻿using Assignment.Application.Common.Interfaces;
+using Assignment.Application.Services;
 using Assignment.Domain.Constants;
+using Assignment.Domain.Interfaces;
 using Assignment.Infrastructure.Data;
 using Assignment.Infrastructure.Data.Interceptors;
 using Assignment.Infrastructure.Identity;
@@ -51,6 +53,7 @@ public static class DependencyInjection
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
         services.AddScoped<IWeatherForecastApi, WeatherForecastApi>();
+        services.AddSingleton<ICacheProvider, InMemoryCacheProvider>();
 
         return services;
     }
