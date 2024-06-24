@@ -5,14 +5,14 @@ public class CountryDto
 {
     public CountryDto()
     {
-        Items = Array.Empty<CityDto>();
+        Cities = Array.Empty<CityDto>();
     }
 
     public int Id { get; init; }
 
     public string? Name { get; init; }
 
-    public IList<CityDto> Items { get; init; }
+    public IList<CityDto> Cities { get; init; }
 
     private class Mapping : Profile
     {

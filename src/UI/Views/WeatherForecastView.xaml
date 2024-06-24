@@ -9,6 +9,62 @@
              Width="800"
              Height="450">
     <Grid>
-        <TextBlock Text="{Binding Name}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock 
+            VerticalAlignment="Center"
+            Text="Please select country: " />
+
+        <ComboBox 
+            Grid.Column="1"
+            ItemsSource="{Binding Countries}"
+            HorizontalAlignment="Left"
+            DisplayMemberPath="Name"
+            SelectedItem="{Binding SelectedCountry}"
+            Width="200" Height="30" Margin="10"/>
+
+        <TextBlock 
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Text="Please select city: " />
+        
+        <ComboBox 
+            Grid.Column="3"
+            DataContext="{Binding SelectedCountry}"
+            ItemsSource="{Binding Cities}"
+            HorizontalAlignment="Left"
+            DisplayMemberPath="Name"
+            SelectedItem="{Binding DataContext.SelectedCity, RelativeSource={RelativeSource AncestorType=Window}}"
+            Width="200" Height="30" Margin="10"/>
+
+
+        <TextBlock 
+            Grid.Row="1" 
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="35"
+            FontWeight="Bold"
+            Text="{Binding Temperature, StringFormat={}{0}°C}" />
+
+        <TextBlock 
+            Grid.Row="1" 
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="30"
+            FontWeight="DemiBold"
+            Text="{Binding SkyCover}" />
+
     </Grid>
 </UserControl>
