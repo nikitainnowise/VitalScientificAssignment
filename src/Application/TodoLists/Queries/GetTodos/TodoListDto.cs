@@ -13,8 +13,6 @@ public class TodoListDto
 
     public string? Title { get; init; }
 
-    public string? Colour { get; init; }
-
     public IList<TodoItemDto> Items { get; init; }
 
     private class Mapping : Profile

@@ -1,5 +1,6 @@
 ﻿using Assignment.Application.Common.Interfaces;
 using Assignment.UI.Services;
+using Assignment.UI.ViewModels;
 using Caliburn.Micro;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class DependencyInjection
             .AddTransient<IWindowManager, WindowManager>()
             .AddTransient<MainViewModel>()
             .AddTransient<TodoManagmentViewModel>()
+            .AddTransient<WeatherForecastViewModel>()
             .AddTransient<IExceptionViewer, ExceptionViewer>();
     }
 }

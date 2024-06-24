@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Assignment.UI.ViewModels;
 using Caliburn.Micro;
 
 namespace Assignment.UI
@@ -17,9 +18,10 @@ namespace Assignment.UI
             WeatherForecast = new RelayCommand(ShowWeatherForecast);
         }
 
-        private void ShowWeatherForecast(object obj)
+        private async void ShowWeatherForecast(object obj)
         {
-            
+            var weatherForecast = IoC.Get<WeatherForecastViewModel>();
+            await _windowManager.ShowDialogAsync(weatherForecast);
         }
 
         private async void ShowTodoListManagment(object obj)
