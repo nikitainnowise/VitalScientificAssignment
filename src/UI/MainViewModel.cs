@@ -19,7 +19,7 @@ namespace Assignment.UI
 
         private void ShowWeatherForecast(object obj)
         {
-            throw new NotImplementedException();
+            
         }
 
         private async void ShowTodoListManagment(object obj)

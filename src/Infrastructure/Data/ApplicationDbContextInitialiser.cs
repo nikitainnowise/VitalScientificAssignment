@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Assignment.Infrastructure.Data;
 
@@ -54,6 +55,7 @@ public class ApplicationDbContextInitialiser
     {
         try
         {
+            //await Task.Delay(1);
             await TrySeedAsync();
         }
         catch (Exception ex)
@@ -98,6 +100,33 @@ public class ApplicationDbContextInitialiser
                     new TodoItem { Title = "Check off the first item ✅" },
                     new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
                     new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
+                }
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        // Default data
+        // Seed, if necessary
+        if (!_context.Countries.Any())
+        {
+            _context.Countries.Add(new Country
+            {
+                Name = "Germany",
+                Cities =
+                {
+                    new City() { Name = "Berlin" },
+                    new City() { Name = "Jena" },
+                }
+            });
+
+            _context.Countries.Add(new Country
+            {
+                Name = "Poland",
+                Cities =
+                {
+                    new City() { Name = "Warsaw" },
+                    new City() { Name = "Wroclav" },
                 }
             });
 
