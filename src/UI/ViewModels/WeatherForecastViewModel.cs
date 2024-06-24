@@ -3,6 +3,7 @@ using Assignment.Application.Countries.Queries.GetCountries;
 using Assignment.Application.WeatherForecast.Queries;
 using Caliburn.Micro;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Assignment.UI.ViewModels;
 public class WeatherForecastViewModel : Screen
@@ -10,6 +11,7 @@ public class WeatherForecastViewModel : Screen
     private const string NoDataSign = "-";
 
     private readonly ISender _sender;
+    private readonly ILogger _logger;
 
     private string _temperature = NoDataSign;
     public string Temperature
@@ -84,21 +86,24 @@ public class WeatherForecastViewModel : Screen
 
     public ICommand RefreshWeatherCommand { get; private set; }
 
-    public WeatherForecastViewModel(ISender sender)
+    public WeatherForecastViewModel(
+        ISender sender,
+        ILogger<WeatherForecastViewModel> logger)
     {
         _sender = sender;
+        _logger = logger;
 
         Initialize();
     }
 
     private void Initialize()
     {
-        RefreshWeatherCommand = new RelayCommand(TryRefreshWeater);
+        RefreshWeatherCommand = new RelayCommand(TryRefreshWeather);
 
         TryLoadCountriesList();
     }
 
-    private async void TryRefreshWeater(object obj)
+    private async void TryRefreshWeather(object obj)
     {
         try
         {
@@ -111,7 +116,7 @@ public class WeatherForecastViewModel : Screen
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _logger.LogError(ex, "TryRefreshWeather");
         }
     }
 
@@ -128,7 +133,7 @@ public class WeatherForecastViewModel : Screen
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _logger.LogError(ex, "TryLoadCountriesList");
         }
     }
 

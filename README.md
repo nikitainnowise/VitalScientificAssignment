@@ -58,3 +58,9 @@ The following features need to be implemented:
 This document provides a comprehensive guide for developers to understand and contribute effectively to the ToDoList management system. For any questions or further clarifications, please consult the project's lead developer.
 
 We wish you the best of luck and look forward to reviewing your submission!
+
+
+Improvements:
+    - Put files in UI project to appropriate folders
+    - Create AsyncRelayCommand
+    - Load Todo list items separately from Todo list (Performance)
