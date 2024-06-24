@@ -65,3 +65,5 @@ We wish you the best of luck and look forward to reviewing your submission!
 - Create AsyncRelayCommand
 - Load Todo list items separately from Todo list (Performance)
 - Create responsive design on TODO and Weather screens
+
+P.S I decided to skip unit tests for weather screen because we need to put view models in separate project and nothing esle I can see to test.
