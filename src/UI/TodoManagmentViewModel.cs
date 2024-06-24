@@ -55,6 +55,7 @@ internal class TodoManagmentViewModel : Screen
     public ICommand AddTodoListCommand { get; private set; }
     public ICommand AddTodoItemCommand { get; private set; }
     public ICommand DoneTodoItemCommand { get; private set; }
+    public object CanAddItem { get; private set; }
 
     public TodoManagmentViewModel(ISender sender,
         IWindowManager windowManager,
@@ -74,8 +75,8 @@ internal class TodoManagmentViewModel : Screen
         await RefereshTodoLists();
 
         AddTodoListCommand = new RelayCommand(AddTodoList);
-        AddTodoItemCommand = new RelayCommand(AddTodoItem);
-        DoneTodoItemCommand = new RelayCommand(DoneTodoItem);
+        AddTodoItemCommand = new RelayCommand(AddTodoItem, () => SelectedTodoList != null);
+        DoneTodoItemCommand = new RelayCommand(DoneTodoItem, () => SelectedItem != null);
     }
 
     private async Task RefereshTodoLists()
